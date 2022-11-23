@@ -121,7 +121,85 @@ void test_gui()
         L"标题",
         gui::information_buttons_type::ok
     );
+    public static bool IsInstallWebview2()
+    {
 
+        string ? res = "";
+        try
+        {
+            res = CoreWebView2Environment.GetAvailableBrowserVersionString();
+        }
+        catch (System.Exception)
+        {
+        }
+        if (res == "" || res == null)
+        {
+            return false;
+        }
+        return true;
+    }
+    public static class InstallCheck
+    {
+        public static bool IsInstallWebview2()
+        {
+            string ? res = "";
+            try
+            {
+                res = CoreWebView2Environment.GetAvailableBrowserVersionString();
+            }
+            catch (System.Exception)
+            {
+            }
+            if (res == "" || res == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task InstallWebview2Async()
+        {
+            if (!IsInstallWebview2())
+            {
+                Form1.gui.Text = "正在下载安装必须组件";
+                Form1.gui.label1.Visible = true;
+                Form1.gui.label1.Text = "正在下载安装必须组件";
+
+                using var webClient = new WebClient();
+                bool isDownload = false;
+                string MicrosoftEdgeWebview2Setup = System.IO.Path.Combine(Application.StartupPath, "MicrosoftEdgeWebview2Setup.exe");
+                webClient.DownloadFileCompleted += (s, e) = > { isDownload = true; };
+                await webClient.DownloadFileTaskAsync("https://go.microsoft.com/fwlink/p/?LinkId=2124703", "MicrosoftEdgeWebview2Setup.exe");
+
+                if (isDownload)
+                {
+                    Process.Start(MicrosoftEdgeWebview2Setup, " /silent /install").WaitForExit();
+
+                    if (IsInstallWebview2())
+                    {
+                        //重启
+                        Application.Restart();
+                        Process.GetCurrentProcess() ? .Kill();
+                        if (System.IO.File.Exists("MicrosoftEdgeWebview2Setup.exe")) {
+                            System.IO.File.Delete("MicrosoftEdgeWebview2Setup.exe");
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void DeleteWebView2Folder()
+        {
+            string webview2Dir = $"{System.Environment.GetCommandLineArgs()[0]}.WebView2";
+            if (Directory.Exists(webview2Dir))
+            {
+                Directory.Delete(webview2Dir, true);
+            }
+        }
+    }
+
+
+    
     // 显示一个带进度条的弹窗
     auto initialize_window = [](gui::progress_control control)
     {
