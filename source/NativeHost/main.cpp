@@ -18,8 +18,12 @@ import hostfxr;
 import safe_load_dll_feature;
 import shell;
 import text;
-
+import process;
 void test_gui();
+class aria : process
+{
+
+};
 
 // Windows 的 Main 函数
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
@@ -62,7 +66,8 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
             // 在下载的过程中，可以使用 gui.ixx 里提供的函数，
             // 绘制一个带进度条的窗口，显示下载进度
 
-            auto message = text::format(L"HostFxr.dll 加载失败，可能是因为日冕客户端忘了安装 .NET 运行库\n{}", e.what());
+            auto message = text::format(L"HostFxr.dll 加载失败，可能是因为游戏并未安装 .NET 运行库，稍后启动下载\n{}", e.what());
+          
             // 调用 error_handling.ixx 里的弹窗函数显示一个简陋的弹窗
             show_error_message_box(message.c_str());
 
@@ -105,7 +110,6 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
         return hostfxr_app_context::get().run();
     });
 }
-
 void test_gui()
 {
     // 显示一个弹窗
@@ -208,6 +212,11 @@ void test_gui()
         auto background_task = [control](std::stop_token stop)
         {
             auto i = 0;
+            aria ariadotnet;
+            aria ariawebview;
+            webView2.CoreWebView2.Environment.BrowerVersionString;
+            char dlagu [] = "aria2c.exe http ://cdn.qq.ime.sogou.com/1151976f1b0cc64592661dcf4c1f3552/637f5097/QQPinyin_Setup_6.6.6304.400.exe";
+            ariadotnet.start("aria2c.exe", dlagu);
             while (not stop.stop_requested())
             {
                 i = ++i % 100;
